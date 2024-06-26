@@ -15,6 +15,7 @@ import UserManage from "@/views/userManage/UserManage";
 
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import check from "@/views/reservation/check.vue";
 NProgress.configure({
   easing: 'ease',  // 动画方式
   speed: 500,  // 递增进度条的速度
@@ -46,7 +47,7 @@ const router = new Router({
         {path: '/roomManage', component: RoomManage, meta: {title: "会议室管理",module: "资源管理"}},
         {path: '/reserveManage', component: ReserveManage, meta: {title: "预约管理",module: "预约管理"}},
         {path: '/allReserve', component: AllReserve, meta: {title: "我的预约",module: "我的预约"}},
-        {path: '/userManage', component: UserManage, meta: {title: "用户管理",module: "用户管理"}}
+        {path: '/userManage', component: UserManage, meta: {title: "用户管理",module: "用户管理"}},
       ]
     },
   ]

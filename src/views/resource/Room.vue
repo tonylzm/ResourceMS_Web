@@ -39,7 +39,7 @@
 
       <!--操作列-->
       <span slot="action" slot-scope="scope">
-          <a @click="handleEdit(scope)">Edit</a>
+          <a @click="handleEdit(scope)">编辑</a>
           <a-divider type="vertical"/>
 
           <a-popconfirm
@@ -47,7 +47,7 @@
               title="确定删除该会议室?"
               @confirm="() => onDelete(scope)"
           >
-          <a>Delete</a>
+          <a>删除</a>
         </a-popconfirm>
 
         </span>
@@ -499,7 +499,7 @@ export default {
     //会议室搜索
     async onSearch() {
       try {
-        const {data: res} = await this.$http.get('/searchroom', {
+        const {data: res} = await this.$http.get('/searchRoom', {
           params: {
             search: this.searchMsg,
             pageNum: this.pagination.current,

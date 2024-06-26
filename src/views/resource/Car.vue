@@ -40,15 +40,15 @@
 
         <!--操作列-->
         <span slot="action" slot-scope="scope">
-          <a @click="handleEdit(scope)">Edit</a>
+          <a @click="handleEdit(scope)">编辑</a>
           <a-divider type="vertical"/>
 
           <a-popconfirm
               v-if="carList.length"
-              title="Sure to delete?"
+              title="确定删除?"
               @confirm="() => onDelete(scope)"
           >
-          <a>Delete</a>
+          <a>删除</a>
         </a-popconfirm>
 
         </span>
@@ -514,7 +514,7 @@ export default {
     //车辆搜索
     async onSearch() {
       try {
-        const {data: res} = await this.$http.get('/api/searchCar', {
+        const {data: res} = await this.$http.get('/searchCar', {
           params: {
             search: this.searchMsg,
             pageNum: this.pagination.current,

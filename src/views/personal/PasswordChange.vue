@@ -1,20 +1,20 @@
 <template>
-  <a-form @submit.prevent="submitChange" :form="form">
+  <a-form class="a-form" @submit.prevent="submitChange" :form="form">
     <a-tabs size="large" :tabBarStyle="{textAlign: 'center'}" style="padding: 0 2px;" :activeKey="activeKey"
             @change="handleTabsChange">
       <a-tab-pane tab="密码更改" key="1">
         <a-alert type="error" :closable="true" v-show="error" :message="error" showIcon
                  style="margin-bottom: 24px;"></a-alert>
-        <a-form-item>
-          <a-input size="large"  type="password" v-decorator="['old_password',{rules: [{ required: true, message: '请输入旧密码', whitespace: true}]}]">
-            <a-icon slot="prefix" type="lock"></a-icon>
-          </a-input>
-        </a-form-item>
-        <a-form-item>
-          <a-input size="large" type="password" v-decorator="['new_password',{rules: [{ required: true, message: '请输入新密码', whitespace: true}]}]">
-            <a-icon slot="prefix" type="lock"></a-icon>
-          </a-input>
-        </a-form-item>
+       <a-form-item>
+        <a-input size="large" type="password" placeholder="请输入旧密码" v-decorator="['old_password',{rules: [{ required: true, message: '请输入旧密码', whitespace: true}]}]">
+          <a-icon slot="prefix" type="lock"></a-icon>
+        </a-input>
+      </a-form-item>
+      <a-form-item>
+        <a-input size="large" type="password" placeholder="请输入新密码" v-decorator="['new_password',{rules: [{ required: true, message: '请输入新密码', whitespace: true}]}]">
+          <a-icon slot="prefix" type="lock"></a-icon>
+        </a-input>
+      </a-form-item>
       </a-tab-pane>
     </a-tabs>
     <a-form-item>
@@ -146,5 +146,9 @@ export default {
 </script>
 
 <style scoped>
-
+.a-form {
+  width: 300px;  /* 设置表单的宽度 */
+  height: 400px; /* 设置表单的高度 */
+  margin: auto;  /* 居中表单 */
+}
 </style>

@@ -170,6 +170,7 @@ export default {
   },
   methods: {
     updatePassword() {
+      this.$router.push("/passwordChange");
 
     },
     logout() {

@@ -59,37 +59,49 @@
     >
 
       <a-form v-bind="formItemLayout" :form="form" @submit="handleSubmit">
-
-        <a-form-item label="预约时间">
-          <a-range-picker
+        <!-- 选择日期 -->
+        <a-form-item label="预约日期">
+          <a-date-picker
+              v-decorator="['selectDate', { rules: [{ required: true, message: '请选择日期' }] }]"
+              format="YYYY-MM-DD"
               :disabled-date="disabledDate"
-              :disabled-time="disabledRangeTime"
-              :show-time="{
-                hideDisabledOptions: true,
-                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],}"
-              v-decorator="['selectTime', rangeConfig]"
-              format="YYYY-MM-DD HH:mm:ss"
+              @change="handleDateChange"
           />
         </a-form-item>
 
-        <!--申请理由-->
-        <a-form-item label="申请理由" v-bind="formItemLayout">
-          <a-textarea placeholder="填写申请理由提高申请通过率(非必填)" :rows="4" v-decorator="['applyReason',{  initialValue:'' }]"/>
+        <!-- 选择时间段 -->
+        <a-form-item label="预约时间">
+          <div>
+            <a-tag
+                v-for="(hour, index) in availableHours"
+                :key="index"
+                :color="getTagColor(hour)"
+                @click="handleTagClick(hour)"
+                :disabled="!isSelectable(hour)"
+            >
+              {{ hour }}
+            </a-tag>
+          </div>
         </a-form-item>
 
-        <!--按钮-->
+        <!-- 申请理由 -->
+        <a-form-item label="申请理由" v-bind="formItemLayout">
+          <a-textarea
+              placeholder="填写申请理由提高申请通过率(非必填)"
+              :rows="4"
+              v-decorator="['applyReason', { initialValue: '' }]"
+          />
+        </a-form-item>
+
+        <!-- 按钮 -->
         <a-form-item
             :wrapper-col="{
         xs: { span: 24, offset: 0 },
         sm: { span: 16, offset: 8 },
       }"
         >
-          <a-button @click="handleCancel" style="margin-right: 10px">
-            取消
-          </a-button>
-          <a-button type="primary" html-type="submit" :loading="submitLoading">
-            提交
-          </a-button>
+          <a-button @click="handleCancel" style="margin-right: 10px">取消</a-button>
+          <a-button type="primary" html-type="submit" :loading="submitLoading">提交</a-button>
         </a-form-item>
       </a-form>
 
@@ -155,6 +167,11 @@ export default {
       submitLoading: false,
 
       form: this.$form.createForm(this),
+      availableHours: this.generateAvailableHours(),
+      selectedHours: [],
+      disabledHours: [], // 假设一些不可选时间段
+      formattedDate: '',
+      maxSelectableHours: 4,
 
       pagination: {
         pageSize: 7,
@@ -184,7 +201,158 @@ export default {
     }
   },
   methods:{
+    disabledDate(current) {
+      // 禁用今天之前的日期
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (current && current < moment().endOf('day')) return true;
+    },
+    async handleDateChange(date) {
+      // 假设 date 是一个字符串，比如 "2024-06-26"
+      const parsedDate = new Date(date);
+      const formattedDate = `${parsedDate.getFullYear()}-${(parsedDate.getMonth() + 1).toString().padStart(2, '0')}-${parsedDate.getDate().toString().padStart(2, '0')}`;
+      console.log(formattedDate);
+      this.formattedDate = formattedDate;
 
+      try {
+        // 向后端发送GET请求，获取当前日期的预约情况
+        const { data: res } = await this.$http.get(`/reserveroomtime/?roomId=${this.roomId}&date=${formattedDate}`);
+        if (res.status !== 200) {
+          this.$message.warning("服务器繁忙，请稍后再试");
+          return;
+        }
+        // 检查 res.data 是否存在
+        if (res.data && res.data.length > 0) {
+          const disabledHours = new Set();
+
+          res.data.forEach(timeRange => {
+            const [start, end] = timeRange.split('-').map(t => t.trim());
+
+            // 生成小时区间并加入到 disabledHours 集合中
+            let startHour = parseInt(start.split(':')[0]);
+            let endHour = parseInt(end.split(':')[0]);
+
+            for (let hour = startHour; hour <= endHour; hour++) {
+              const hourStr = hour.toString().padStart(2, '0');
+              disabledHours.add(`${hourStr}:00:00 - ${hourStr}:59:59`);
+            }
+          });
+
+          this.disabledHours = Array.from(disabledHours);
+        } else {
+          this.disabledHours = [];
+        }
+
+        console.log('Disabled Hours:', this.disabledHours);
+      } catch (error) {
+        this.$message.error("请求失败，请稍后再试");
+        console.error(error);
+      }
+    },
+
+
+
+    generateAvailableHours() {
+      const hours = [];
+      for (let i = 9; i < 18; i++) {
+        const hour = i.toString().padStart(2, '0');
+        hours.push(`${hour}:00:00 - ${hour}:59:59`);
+      }
+      return hours;
+    },
+
+    handleTagClick(hour) {
+      //如果选中的hour是在被禁止的时间段内，则不做任何操作
+      if (this.disabledHours.includes(hour)) {
+        this.$message.error('该时间段不可选');
+        return;
+      }
+      if (this.isSelectable(hour)) {
+        if (this.selectedHours.includes(hour)) {
+          const index = this.selectedHours.indexOf(hour);
+          console.log(this.selectedHours.length)
+          if(index != 0 && index != this.selectedHours.length - 1) {
+            console.log('index:', index, "不允许")
+            this.$message.error('不允许删除中间时间段');
+            return
+          }else {
+            this.selectedHours.splice(index, 1);
+            console.log(this.selectedHours)
+            this.$message.success('删除成功');
+          }
+        } else {
+          // 添加当前选择的时间段
+          this.selectedHours.push(hour);
+          // 根据当前选择的时间段，合并连续的时间段
+          this.mergeContinuousHours();
+        }
+      }
+    },
+
+    mergeContinuousHours() {
+      if (this.selectedHours.length < 2) return;
+
+      // 提取并排序时间段
+      const sortedHours = this.selectedHours.map(hour => {
+        const hourStart = parseInt(hour.split(':')[0]);
+        return { hourStart, hour };
+      }).sort((a, b) => a.hourStart - b.hourStart).map(entry => entry.hour);
+
+      const mergedHours = [sortedHours[0]];
+
+      for (let i = 1; i < sortedHours.length; i++) {
+        const prevHourEnd = parseInt(mergedHours[mergedHours.length - 1].split(':')[1]);
+        const currentHourStart = parseInt(sortedHours[i].split(':')[0]);
+
+        if (currentHourStart === prevHourEnd) {
+          // 如果当前时间段与前一个时间段连续，则合并
+          mergedHours[mergedHours.length - 1] = `${mergedHours[mergedHours.length - 1].split(':')[0]}:${currentHourStart + 1}:00`;
+        } else {
+          // 否则将当前时间段加入合并数组
+          mergedHours.push(sortedHours[i]);
+        }
+      }
+
+      this.selectedHours = mergedHours;
+      console.log('合并后的时间段:', this.selectedHours);
+    },
+
+    getTagColor(hour) {
+      if (this.selectedHours.includes(hour)) {
+        return 'green';
+      } else if (this.disabledHours.includes(hour)) {
+        return 'grey';
+      } else if (this.isSelectable(hour)) {
+        return 'blue';
+      } else {
+        return 'default';
+      }
+    },
+    isSelectable(hour) {
+      if (this.selectedHours.length === 0) return true;
+
+      const { hourStart, hourEnd } = this.parseHourRange(hour);
+
+      for (let i = 0; i < this.selectedHours.length; i++) {
+        const selected = this.parseHourRange(this.selectedHours[i]);
+        // 判断当前时间段与已选时间段是否重叠或相邻
+        if (
+            (hourStart >= selected.hourStart && hourStart <= selected.hourEnd + 1) ||
+            (hourEnd >= selected.hourStart - 1 && hourEnd <= selected.hourEnd)
+        ) {
+          return true; // 只要存在一个重叠或相邻的情况，就返回可选
+        }
+      }
+
+      return false; // 如果没有重叠或相邻情况，返回不可选
+    },
+
+    parseHourRange(hour) {
+      const parts = hour.split(' - ');
+      const hourStart = parseInt(parts[0].split(':')[0]);
+      const hourEnd = parseInt(parts[1].split(':')[0]);
+      return { hourStart, hourEnd };
+    },
     //监听分页数据改变
     pageNumChange(page, pageSize) {
       this.pagination.current = page;
@@ -249,11 +417,7 @@ export default {
       }
       return result;
     },
-    //禁用日期范围
-    disabledDate(current) {
-      // Can not select days before today and today
-      return current && current < moment().endOf('day');
-    },
+
     //禁用时间范围
     disabledRangeTime(_, type) {
       if (type === 'start') {
@@ -277,12 +441,16 @@ export default {
         if (err) {
           return;
         }
+        let startTime = this.selectedHours[0].split(' - ')[0];
+        let endTime = this.selectedHours[this.selectedHours.length - 1].split(' - ')[1];
+        let start = this.formattedDate + ' ' + startTime;
+        let end = this.formattedDate + ' ' + endTime;
         this.submitLoading = true;
         const values = {
           roomId: this.roomId,
           applyReason: fieldsValue['applyReason'],
-          startTime: fieldsValue['selectTime'][0].format('YYYY-MM-DD HH:mm:ss'),
-          endTime: fieldsValue['selectTime'][1].format('YYYY-MM-DD HH:mm:ss'),
+          startTime: start,
+          endTime: end,
         }
 
         try {

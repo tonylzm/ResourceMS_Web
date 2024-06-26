@@ -27,13 +27,13 @@
       <template slot="operation" slot-scope="text, record">
         <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => save(record.key)">Save</a>
+          <a @click="() => save(record.key)">保存</a>
           <a-popconfirm title="取消不会保存任何数据?" @confirm="() => cancel(record.key)">
-            <a>Cancel</a>
+            <a>取消</a>
           </a-popconfirm>
         </span>
           <span v-else>
-          <a :disabled="editingKey !== ''" @click="() => edit(record.key)">Edit</a>
+          <a :disabled="editingKey !== ''" @click="() => edit(record.key)">编辑</a>
         </span>
 
           <a-divider type="vertical"/>
@@ -43,7 +43,7 @@
               title="是否永久删除用户?"
               @confirm="() => onDelete(record.key)"
           >
-            <a href="javascript:;">Delete</a>
+            <a href="javascript:;">删除</a>
           </a-popconfirm>
         </div>
       </template>
