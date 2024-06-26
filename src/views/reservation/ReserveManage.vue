@@ -8,7 +8,7 @@
 
             <a slot="loginName" slot-scope="loginName">{{ loginName }}</a>
 
-            <a slot="resourceName" slot-scope="resourceName" v-if="resourceName.carId">{{ resourceName.carId }}</a>
+            <a slot="resourceName" slot-scope="resourceName" v-if="resourceName.carName">{{ resourceName.carName }}</a>
             <a slot="resourceName" slot-scope="resourceName" v-else>{{ resourceName.roomName }}</a>
 
 
@@ -137,7 +137,7 @@ const columns = [
     scopedSlots: {customRender: 'resourcePic'}
   },
   {
-    title: '申请用户',
+    title: '申请用户名称',
     key: 'username',
     dataIndex: 'loginName',
     scopedSlots: {customRender: 'loginName'}
@@ -180,6 +180,7 @@ export default {
       reserveId: '',
       reserveStatus: '申请中',
 
+
       pagination: {
         pageSize: 7,
         current: 1,
@@ -193,6 +194,7 @@ export default {
     handleChange(e) {
       this.reserveStatus = e;
       this.getReserveList();
+
     },
 
 
@@ -200,7 +202,17 @@ export default {
     pageNumChange(page, pageSize) {
       this.pagination.current = page;
       this.pagination.pageSize = pageSize;
-      this.getCarList();
+      //如果是申请中
+      if(this.reserveStatus === '申请中') {
+        this.getReserveList();
+      }
+      else if(this.reserveStatus === '已通过') {
+        this.getReserveList();
+      }
+      else {
+        this.getReserveList();
+      }
+      
     },
 
     async handleSubmit() {
@@ -226,7 +238,9 @@ export default {
     // 处理预约通过
     async handlePass(e) {
       try {
-        const {data: res} = await this.$http.put(`/reserve/pass/${e.reserveId}`);
+        const {data: res} = await this.$http.put(`/reserve/pass/${e.reserveId}`,{
+          rejectReason: this.rejectReason
+        });
         if (res.status !== 200) throw Error
         this.$message.success("处理成功");
         await this.getReserveList();
@@ -242,7 +256,7 @@ export default {
     },
 
     async getReserveList() {
-      const {data: res} = await this.$http.get(`/ReservationList?pageNum=${this.pagination.current}&pageSize=${this.pagination.pageSize}`);
+      const {data: res} = await this.$http.get(`/reserves/${this.reserveStatus}?pageNum=${this.pagination.current}&pageSize=${this.pagination.pageSize}`);
       if (res.status === 200) {
         console.log(res);
         this.reserveList = res.data;

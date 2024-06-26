@@ -141,7 +141,7 @@ const columns = [
   {
     title: '预约结束时间',
     key: 'endTime',
-    dataIndex: 'startTime',
+    dataIndex: 'endTime',
   },
   {
     title: '申请理由',
@@ -173,7 +173,7 @@ const rejColumns = [
   {
     title: '预约结束时间',
     key: 'endTime',
-    dataIndex: 'startTime',
+    dataIndex: 'endTime',
   },
   {
     title: '申请理由',

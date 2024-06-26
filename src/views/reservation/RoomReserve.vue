@@ -12,7 +12,7 @@
 
       <!--车辆状态-->
       <span slot="isActive" slot-scope="isActive">
-        <span v-if="isActive==='true'">
+        <span v-if="isActive===true">
           <a-badge status="success"/>可预约
         </span>
         <span v-else>
@@ -34,7 +34,7 @@
 
       <!--操作列-->
       <span slot="action" slot-scope="scope">
-        <a @click="handleReserve(scope)" :disabled="scope.isActive==='false'">立即预约</a>
+        <a @click="handleReserve(scope)" :disabled="scope.isActive===false">立即预约</a>
       </span>
     </a-table>
 

@@ -21,7 +21,7 @@
           <a-switch checked-children="可用"
                     un-checked-children="不可用"
                     @change="checked=>handleChange(checked,scope)"
-                    :default-checked="scope.isActive==='true'"
+                    :default-checked="scope.isActive===true"
           />
        </span>
 
