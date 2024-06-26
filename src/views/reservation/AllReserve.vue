@@ -11,7 +11,7 @@
             <a slot="resourceName" slot-scope="resourceName" v-else>{{ resourceName.roomName}}</a>
 
             <span slot="resourcePic" slot-scope="resourcePic">
-              <img v-if="resourcePic.carPic" :src="require(`../../../../temp/upload/imag/${resourcePic.carPic}`)" height="100px">
+              <img v-if="resourcePic.carPic" :src="require(`D:/temp/upload/imag/${resourcePic.carPic}`)" height="100px">
               <img v-else :src="resourcePic.roomPic" height="100px">
             </span>
 

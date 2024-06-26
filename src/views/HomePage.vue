@@ -97,6 +97,12 @@
               <span>个人信息</span>
             </router-link>
           </a-menu-item>
+          <a-menu-item key="密码管理">
+            <router-link tag='div' to="/passwordChange">
+              <a-icon type="pie-chart"/>
+              <span>密码管理</span>
+            </router-link>
+          </a-menu-item>
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>

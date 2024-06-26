@@ -13,8 +13,8 @@
 
 
             <span slot="resourcePic" slot-scope="resourcePic">
-              <img v-if="resourcePic.carPic" :src="require(`../../../../temp/upload/imag/${resourcePic.carPic}`)" height="100px">
-              <img v-else :src="require(`../../../../temp/upload/imag/${resourcePic.roomPic}`)" height="100px">
+              <img v-if="resourcePic.carPic" :src="require(`D:/temp/upload/imag/${resourcePic.carPic}`)" height="100px">
+              <img v-else :src="require(`D:/temp/upload/imag/${resourcePic.roomPic}`)" height="100px">
             </span>
 
             <span slot="reason" slot-scope="scope" v-if="scope.applyReason">{{ scope.applyReason }}</span>
@@ -50,8 +50,8 @@
 
 
             <span slot="resourcePic" slot-scope="resourcePic">
-                <img v-if="resourcePic.carPic" :src="require(`../../../../temp/upload/imag/${resourcePic.carPic}`)" height="100px">
-              <img v-else :src="require(`../../../../temp/upload/imag/${resourcePic.roomPic}`)" height="100px">
+                <img v-if="resourcePic.carPic" :src="require(`D:/temp/upload/imag/${resourcePic.carPic}`)" height="100px">
+              <img v-else :src="require(`D:/temp/upload/imag/${resourcePic.roomPic}`)" height="100px">
             </span>
 
             <span slot="reason" slot-scope="scope" v-if="scope.applyReason">{{ scope.applyReason }}</span>
@@ -84,8 +84,8 @@
 
 
             <span slot="resourcePic" slot-scope="resourcePic">
-              <img v-if="resourcePic.carPic" :src="require(`../../../../temp/upload/imag/${resourcePic.carPic}`)" height="100px">
-              <img v-else :src="require(`../../../../temp/upload/imag/${resourcePic.roomPic}`)" height="100px">
+              <img v-if="resourcePic.carPic" :src="require(`D:/temp/upload/imag/${resourcePic.carPic}`)" height="100px">
+              <img v-else :src="require(`D:/temp/upload/imag/${resourcePic.roomPic}`)" height="100px">
             </span>
 
             <span slot="reason" slot-scope="scope" v-if="scope.applyReason">{{ scope.applyReason }}</span>
@@ -212,7 +212,7 @@ export default {
       else {
         this.getReserveList();
       }
-      
+
     },
 
     async handleSubmit() {

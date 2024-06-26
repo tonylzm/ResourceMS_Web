@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from '../views/login/Common'
 import Home from '../views/HomePage'
 import Profile from "@/views/personal/Profile";
+import PasswordChange from "@/views/personal/PasswordChange.vue"
 import Welcome from "@/views/index/Welcome";
 import CarReserve from '../views/reservation/CarReserve'
 import RoomReserve from "@/views/reservation/RoomReserve";
@@ -37,6 +38,7 @@ const router = new Router({
     {
       path: '/home', component: Home, children: [
         {path: '/profile', component: Profile, meta: {title: "个人信息",module:"账号设置"}},
+        {path: '/passwordChange', component: PasswordChange, meta: {title: "密码管理",module:"账号设置"}},
         {path: '/welcome', component: Welcome, meta: {title: "首页"}},
         {path: '/car', component: CarReserve, meta: {title: "车辆预约",module: "预约管理"}},
         {path: '/room', component: RoomReserve, meta: {title: "会议室预约",module: "预约管理"}},
