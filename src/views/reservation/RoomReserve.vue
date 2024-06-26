@@ -216,9 +216,22 @@ export default {
     },
 
     //处理申请预约单击事件
-    handleReserve(row) {
+    async handleReserve(row) {
+      if(await this.getapplystate() === false) return this.$message.warning("您有未处理的预约申请，请等待处理！");
       this.roomId = row.roomId;
       this.roomReserveVisible = true;
+    },
+
+    async getapplystate(){
+      try {
+        const {data: res} = await this.$http.get(`reserved/${window.sessionStorage.getItem("USER_ID")}`)
+        if (res.status !== 200) return this.$message.warning("服务器繁忙，请稍后再试");
+        //输出返回的数据
+        return res.data;
+      }catch (e) {
+        this.submitLoading = false;
+        return this.$message.warning("服务器繁忙，请稍后再试");
+      }
     },
 
     //监听关闭对话框事件

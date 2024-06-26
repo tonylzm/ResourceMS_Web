@@ -11,8 +11,8 @@
             <a slot="resourceName" slot-scope="resourceName" v-else>{{ resourceName.roomName}}</a>
 
             <span slot="resourcePic" slot-scope="resourcePic">
-              <img v-if="resourcePic.carPic" :src="require(`../../../../temp/upload/imag/${resourcePic.carPic}`)" height="100px">
-              <img v-else :src="resourcePic.roomPic" height="100px">
+            <img v-if="resourcePic.carPic" :src="require(`../../../../temp/upload/imag/${resourcePic.carPic}`)" height="100px">
+              <img v-else :src="require(`../../../../temp/upload/imag/${resourcePic.roomPic}`)" height="100px">
             </span>
 
             <span slot="reason" slot-scope="scope" v-if="scope.applyReason">{{scope.applyReason}}</span>
@@ -33,8 +33,8 @@
             <a slot="resourceName" slot-scope="resourceName" v-else>{{ resourceName.roomName}}</a>
 
             <span slot="resourcePic" slot-scope="resourcePic">
-              <img v-if="resourcePic.carPic" :src="resourcePic.carPic" height="100px">
-              <img v-else :src="resourcePic.roomPic" height="100px">
+               <img v-if="resourcePic.carPic" :src="require(`../../../../temp/upload/imag/${resourcePic.carPic}`)" height="100px">
+              <img v-else :src="require(`../../../../temp/upload/imag/${resourcePic.roomPic}`)" height="100px">
             </span>
 
             <span slot="reason" slot-scope="scope" v-if="scope.applyReason">{{scope.applyReason}}</span>
@@ -54,19 +54,19 @@
             <a slot="resourceName" slot-scope="resourceName" v-else>{{ resourceName.roomName}}</a>
 
             <span slot="resourcePic" slot-scope="resourcePic">
-              <img v-if="resourcePic.carPic" :src="resourcePic.carPic" height="100px">
-              <img v-else :src="resourcePic.roomPic" height="100px">
+             <img v-if="resourcePic.carPic" :src="require(`../../../../temp/upload/imag/${resourcePic.carPic}`)" height="100px">
+              <img v-else :src="require(`../../../../temp/upload/imag/${resourcePic.roomPic}`)" height="100px">
             </span>
 
             <span slot="action" slot-scope="scope">
               <a @click="reApply(scope)">重新申请</a>
             </span>
 
-            <span slot="applyReason"  slot-scope="applyReason" v-if="applyReason">{{reason.applyReason}}</span>
-            <span slot="applyReason"  v-else>未填写</span>
+            <span slot="reason" slot-scope="scope" v-if="scope.applyReason">{{scope.applyReason}}</span>
+            <span slot="reason"  v-else>未填写</span>
 
-            <span slot="rejectReason"  slot-scope="rejectReason" v-if="rejectReason">{{rejectReason.rejectReason}}</span>
-            <span slot="rejectReason"  v-else>无</span>
+            <span slot="reason" slot-scope="scope" v-if="scope.rejectReason">{{scope.rejectReason}}</span>
+            <span slot="reason"  v-else>未填写</span>
 
           </a-table>
         </div>
@@ -248,9 +248,15 @@ export default {
           endTime: valueField['endTime']
         }
         try {
-          const {data: res} = await this.$http.put(`/api/reserve/${this.reserveId}`, values);
+          const {data: res} = await this.$http.put(`/reserves/${this.reserveId}`, values);
           if (res.status!==200) throw Error;
           this.$message.success("申请成功，请留意申请结果！")
+          //关闭对话框
+          this.reReserveVisible = false;
+          //重置表单
+          this.form.resetFields();
+          //更新列表
+          await this.getRejectedList();
         }catch (e) {
           this.$message.warning("服务器繁忙，请稍后再试");
           console.log(e);
