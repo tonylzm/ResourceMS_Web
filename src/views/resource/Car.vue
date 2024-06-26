@@ -14,7 +14,7 @@
 
         <!--车辆图片-->
         <span slot="carPic" slot-scope="scope">
-        <img :src="scope" style="width: 100px" alt="">
+        <img :src="require(`../../../../temp/upload/imag/${scope}`)" style="width: 100px" alt="">
       </span>
 
         <!--车辆状态-->

@@ -7,7 +7,7 @@
 
       <!--车辆图片-->
       <span slot="roomPic" slot-scope="src">
-        <img :src="src" style="width: 100px">
+        <img :src="require(`../../../../temp/upload/imag/${src}`)" style="width: 100px">
       </span>
 
       <!--车辆状态-->

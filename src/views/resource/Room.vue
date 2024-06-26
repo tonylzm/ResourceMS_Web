@@ -13,7 +13,7 @@
 
       <!--会议室图片-->
       <span slot="roomPic" slot-scope="src">
-        <img :src="src" style="width: 100px">
+        <img :src="require(`../../../../temp/upload/imag/${src}`)" style="width: 100px">
       </span>
 
       <!--会议室状态-->
@@ -116,7 +116,7 @@
           <a-upload
               :defaultFileList="fileList"
               name="picture"
-              action="/upload"
+              action="/api/upload"
               list-type="picture"
               @change="handleUploadChange">
             <a-button>
@@ -405,7 +405,7 @@ export default {
           roomDesc: this.tags
         }
         try {
-          const {data: res} = await this.$http.post(`/addroom`, values)
+          const {data: res} = await this.$http.post(`/addrooms`, values)
           if (res.status !== 200) throw Error
 
           setTimeout(() => {
