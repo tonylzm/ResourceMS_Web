@@ -48,6 +48,7 @@ const router = new Router({
         {path: '/reserveManage', component: ReserveManage, meta: {title: "预约管理",module: "预约管理"}},
         {path: '/allReserve', component: AllReserve, meta: {title: "我的预约",module: "我的预约"}},
         {path: '/userManage', component: UserManage, meta: {title: "用户管理",module: "用户管理"}},
+        {path: '/check', component: check, meta: {title: "用户管理",module: "用户管理"}},
       ]
     },
   ]

@@ -83,15 +83,9 @@
 
       <a-form v-bind="formItemLayout" :form="form" @submit="handleSubmit">
 
-        <a-form-item label="预约时间">
-          <time-picker @timeSelect="timeSelect"></time-picker>
-          <a-input v-show="false" v-decorator="['startTime',{rules:[{required: true,message:'请输入预约时间',whitespace: true}]}]"/>
-          <a-input v-show="false" v-decorator="['endTime',{rules:[{required: true,message:'请输入预约时间',whitespace: true}]}]"/>
-        </a-form-item>
-
         <!--申请理由-->
         <a-form-item label="申请理由" >
-          <a-textarea placeholder="填写申请理由提高申请通过率(非必填)" :rows="4" v-decorator="['applyReason',{  initialValue:'' }]"/>
+          <a-textarea placeholder="填写申请理由" :rows="4" v-decorator="['applyReason',{  initialValue:'',rules: [{required: true,message:'重新申请必须填写申请原因',whitespace: true}]}]"/>
         </a-form-item>
 
         <!--按钮-->
@@ -116,7 +110,7 @@
 </template>
 
 <script>
-import TimePicker from "@/views/common/TimePicker";
+
 const columns = [
   {
     key: 'resourceName',
@@ -199,7 +193,6 @@ const passedList = [];
 const rejectedList = [];
 
 export default {
-  components: {TimePicker},
   name: "AllReserve",
   data() {
     return {
@@ -244,8 +237,6 @@ export default {
         this.submitLoading = true;
         const values = {
           applyReason: valueField['applyReason'],
-          startTime: valueField['startTime'],
-          endTime: valueField['endTime']
         }
         try {
           const {data: res} = await this.$http.put(`/reserves/${this.reserveId}`, values);
@@ -315,10 +306,23 @@ export default {
       }
     },
 
-    reApply(scope) {
+    async reApply(scope) {
+      if(await this.getapplystate() === false) return this.$message.warning("您有未处理的预约申请，请等待处理！");
       this.reReserveVisible = true;
       this.reserveId = scope.reserveId;
-    }
+    },
+
+    async getapplystate(){
+      try {
+        const {data: res} = await this.$http.get(`reserved/${window.sessionStorage.getItem("USER_ID")}`)
+        if (res.status !== 200) return this.$message.warning("服务器繁忙，请稍后再试");
+        //输出返回的数据
+        return res.data;
+      }catch (e) {
+        this.submitLoading = false;
+        return this.$message.warning("服务器繁忙，请稍后再试");
+      }
+    },
   },
   created() {
     this.userId = window.sessionStorage.getItem("USER_ID")

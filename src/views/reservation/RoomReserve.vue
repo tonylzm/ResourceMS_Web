@@ -437,6 +437,10 @@ export default {
     //对话框提交事件
     handleSubmit(e) {
       e.preventDefault();
+      if (this.selectedHours.length === 0) {
+        this.$message.error('请选择至少一个时间段');
+        return;
+      }
       this.form.validateFields(async (err, fieldsValue) => {
         if (err) {
           return;

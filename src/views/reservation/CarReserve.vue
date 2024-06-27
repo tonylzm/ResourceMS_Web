@@ -105,19 +105,20 @@
         </a-form-item>
 
         <!-- 选择时间段 -->
-        <a-form-item label="预约时间">
-          <div>
-            <a-tag
-                v-for="(hour, index) in availableHours"
-                :key="index"
-                :color="getTagColor(hour)"
-                @click="handleTagClick(hour)"
-                :disabled="!isSelectable(hour)"
-            >
-              {{ hour }}
-            </a-tag>
-          </div>
-        </a-form-item>
+       <a-form-item label="预约时间" >
+        <div>
+          <a-tag
+              v-for="(hour, index) in availableHours"
+              :key="index"
+              :color="getTagColor(hour)"
+              @click="handleTagClick(hour)"
+              :disabled="!isSelectable(hour)"
+          >
+            {{ hour }}
+          </a-tag>
+        </div>
+
+      </a-form-item>
 
         <!-- 申请理由 -->
         <a-form-item label="申请理由" v-bind="formItemLayout">
@@ -446,6 +447,8 @@ export default {
     handleCancel() {
       this.form.resetFields();
       this.$message.info("已取消操作");
+      this.disabledHours = [];
+      this.selectedHours = [];
       this.carReserveVisible = false;
     },
 
@@ -480,6 +483,10 @@ export default {
     //对话框提交事件
     handleSubmit(e) {
       e.preventDefault();
+      if (this.selectedHours.length === 0) {
+        this.$message.error('请选择至少一个时间段');
+        return;
+      }
       this.form.validateFields(async (err, fieldsValue) => {
         if (err) {
           return;
