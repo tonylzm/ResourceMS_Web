@@ -208,17 +208,19 @@
           <a-upload
               :defaultFileList="fileList"
               name="picture"
-              action="/upload"
+              action="/api/upload"
               list-type="picture"
-              @change="handleUploadChange"
+              @change="handleUploadChanges"
           >
             <a-button>
               <a-icon type="upload"/>
               上传车辆图片
             </a-button>
           </a-upload>
-          <a-input v-show="false" v-decorator="['carImage']"></a-input>
+          <a-input v-show="false"
+                   v-decorator="['editCarImage',{rules: [{ required: true, message: '请上传车辆图片', whitespace: true}]}]"></a-input>
         </a-form-item>
+
 
 
         <!--按钮-->
@@ -312,6 +314,8 @@ export default {
       addCarForm: this.$form.createForm(this),
       editCarForm: this.$form.createForm(this),
 
+
+
       //添加车辆表单布局
       formItemLayout: {
         labelCol: {
@@ -358,7 +362,7 @@ export default {
         this.submitLoading = true;
         const values = {
           carName: fieldsValue['editCarName'],
-          carPic: fieldsValue['carImage'],
+          carPic: fieldsValue['editCarImage'],
           carDesc: this.tags
         }
         try {
@@ -443,7 +447,18 @@ export default {
       this.fileList = [];
       this.tags = []
     },
+    async handleUploadChanges(e) {
+      console.log(e);
+      if (e.file.status === "done") {
+        this.fileList = e.fileList;
+        this.editCarForm.setFieldsValue({"editCarImage": e.file.response.data})
+        console.log("上传文件", this.editCarForm.getFieldValue('editCarImage'));
 
+      } else if (e.file.status === "removed") {
+        const {data: res} = await this.$http.delete(`/img/${this.editCarForm.getFieldValue('editCarImage')}`);
+        if (res.status === 200) console.log("移除文件成功，文件名: ", this.editCarForm.getFieldValue('editCarImage'));
+      }
+    },
     //文件上传状态改变
     async handleUploadChange(e) {
       console.log(e);

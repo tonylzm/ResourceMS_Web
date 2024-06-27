@@ -205,16 +205,17 @@
           <a-upload
               :defaultFileList="fileList"
               name="picture"
-              action="/upload"
+              action="/api/upload"
               list-type="picture"
-              @change="handleUploadChange"
+              @change="handleUploadChanges"
           >
             <a-button>
               <a-icon type="upload"/>
               上传会议室图片
             </a-button>
           </a-upload>
-          <a-input v-show="false" v-decorator="['roomImage']"></a-input>
+          <a-input v-show="false"
+                   v-decorator="['editRoomImage',{rules: [{ required: true, message: '请上传会议室图片', whitespace: true}]}]"></a-input>
         </a-form-item>
 
 
@@ -349,15 +350,19 @@ export default {
         this.submitLoading = true;
         const values = {
           roomName: fieldsValue['editRoomName'],
-          roomPic: fieldsValue['roomImage'],
+          roomPic: fieldsValue['editRoomImage'],
           roomDesc: this.tags
         }
         try {
-          const {data: res} = await this.$http.put(`/room/${fieldsValue['editRoomId']}`, values);
+          const {data: res} = await this.$http.put(`/room/${fieldsValue['roomId']}`, values);
           if (res.status !== 200) throw Error
           this.$message.success("更新会议室信息成功");
           this.submitLoading = false;
           this.editRoomVisible = false;
+          //更新列表
+          await this.getRoomList();
+          //重置表单
+          this.editRoomForm.resetFields();
         } catch (e) {
           this.submitLoading = false;
           console.log(e);
@@ -375,7 +380,18 @@ export default {
       this.editRoomForm.resetFields();
     },
 
+    async handleUploadChanges(e) {
+      console.log(e);
+      if (e.file.status === "done") {
+        this.fileList = e.fileList;
+        this.editRoomForm.setFieldsValue({"editRoomImage": e.file.response.data})
+        console.log("上传文件", this.editRoomForm.getFieldValue('editRoomImage'));
 
+      } else if (e.file.status === "removed") {
+        const {data: res} = await this.$http.delete(`/img/${this.editRoomForm.getFieldValue('editRoomImage')}`);
+        if (res.status === 200) console.log("移除文件成功，文件名: ", this.editRoomForm.getFieldValue('editRoomImage'));
+      }
+    },
     //文件上传状态改变
     async handleUploadChange(e) {
       console.log(e);

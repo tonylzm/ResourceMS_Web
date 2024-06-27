@@ -293,7 +293,7 @@ export default {
 
     generateAvailableHours() {
       const hours = [];
-      for (let i = 9; i < 18; i++) {
+      for (let i = 8; i < 19; i++) {
         const hour = i.toString().padStart(2, '0');
         hours.push(`${hour}:00:00 - ${hour}:59:59`);
       }
