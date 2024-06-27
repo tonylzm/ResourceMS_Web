@@ -202,10 +202,11 @@ export default {
   },
   methods:{
     disabledDate(current) {
-      // 禁用今天之前的日期
+      // 禁用今天之前的日期和3天之后的日期
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      if (current && current < moment().endOf('day')) return true;
+      const diffDays = moment(current).diff(moment(), 'days');
+      if (current && current < moment().endOf('day')|| diffDays > 2) return true;
     },
     async handleDateChange(date) {
       // 假设 date 是一个字符串，比如 "2024-06-26"
