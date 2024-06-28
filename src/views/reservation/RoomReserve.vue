@@ -206,7 +206,7 @@ export default {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const diffDays = moment(current).diff(moment(), 'days');
-      if (current && current < moment().endOf('day')|| diffDays > 2) return true;
+      if (current && current < moment().endOf('day')|| diffDays > 6) return true;
     },
     async handleDateChange(date) {
       // 假设 date 是一个字符串，比如 "2024-06-26"
@@ -217,7 +217,7 @@ export default {
 
       try {
         // 向后端发送GET请求，获取当前日期的预约情况
-        const { data: res } = await this.$http.get(`/reserveroomtime/?roomId=${this.roomId}&date=${formattedDate}`);
+        const { data: res } = await this.$http.get(`/room/${this.roomId}/?date=${formattedDate}`);
         if (res.status !== 200) {
           this.$message.warning("服务器繁忙，请稍后再试");
           return;

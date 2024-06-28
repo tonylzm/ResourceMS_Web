@@ -218,7 +218,7 @@
             </a-button>
           </a-upload>
           <a-input v-show="false"
-                   v-decorator="['editCarImage',{rules: [{ required: true, message: '请上传车辆图片', whitespace: true}]}]"></a-input>
+                   v-decorator="['editCarImage']"></a-input>
         </a-form-item>
 
 
@@ -242,7 +242,7 @@
 
     </a-modal>
 
-    <drawer ref="drawer" :title="title" resource="car" :resource-id="carId" v-if="carId"></drawer>
+    <drawer title="车辆使用情况" :resource-id="carId" resource="car" ref="drawer"></drawer>
   </div>
 </template>
 
@@ -340,10 +340,7 @@ export default {
   methods: {
 
     showCarInfo(scope) {
-      this.carId = scope.carId;
-      console.log(this.carId);
-      this.title = '车辆使用情况';
-      this.$refs.drawer.showDrawer();
+      this.$refs.drawer.showDrawer(scope.carId);
     },
 
     handleEditCancel() {
@@ -391,8 +388,10 @@ export default {
         this.editCarForm.setFieldsValue({"editCarId": scope.carId});
         this.editCarForm.setFieldsValue({"editCarImage": scope.carPic});
       }, 100);
-      this.tags = scope.carDesc;
+      // 确保 tags 数组正确初始化
+      this.tags = scope.carDesc ? scope.carDesc : [];
     },
+
 
     //车辆删除操作
     async onDelete(scope) {
@@ -418,12 +417,18 @@ export default {
         this.$refs.input.focus();
       });
     },
+    handleInputChanges(e) {
+      console.log(e);
+    },
     handleInputChange(e) {
       this.inputValue = e.target.value;
     },
     handleInputConfirm() {
       const inputValue = this.inputValue;
       let tags = this.tags;
+      if (!tags) {
+        tags = [];
+      }
       if (inputValue && tags.indexOf(inputValue) === -1) {
         tags = [...tags, inputValue];
       }
@@ -433,6 +438,7 @@ export default {
         inputValue: '',
       });
     },
+
 
 
     //车辆添加操作
@@ -572,6 +578,7 @@ export default {
   },
 
   created() {
+    this.tags = [];
     this.getCarList();
   }
 }

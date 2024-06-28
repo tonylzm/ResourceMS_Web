@@ -215,7 +215,7 @@
             </a-button>
           </a-upload>
           <a-input v-show="false"
-                   v-decorator="['editRoomImage',{rules: [{ required: true, message: '请上传会议室图片', whitespace: true}]}]"></a-input>
+                   v-decorator="['editRoomImage']"></a-input>
         </a-form-item>
 
 
@@ -284,6 +284,7 @@ const columns = [
 
 ];
 const roomList = []
+
 import Drawer from "@/views/common/Drawer";
 
 export default {
@@ -292,7 +293,7 @@ export default {
   data() {
     return {
 
-      roomId: '',
+      roomId: 0,
       columns,
       roomList,
       searchMsg: '',
@@ -325,6 +326,7 @@ export default {
           xs: {span: 24},
           sm: {span: 6},
         },
+
         wrapperCol: {
           xs: {span: 24},
           sm: {span: 16},
@@ -335,8 +337,7 @@ export default {
   methods: {
 
     showRoomInfo(scope) {
-      this.roomId = scope.roomId;
-      this.$refs.drawer.showDrawer()
+      this.$refs.drawer.showDrawer(scope.roomId);
     },
 
 
@@ -349,7 +350,7 @@ export default {
         }
         this.submitLoading = true;
         const values = {
-          roomName: fieldsValue['editRoomName'],
+          roomName: fieldsValue['roomName'],
           roomPic: fieldsValue['editRoomImage'],
           roomDesc: this.tags
         }
@@ -467,6 +468,9 @@ export default {
     handleInputConfirm() {
       const inputValue = this.inputValue;
       let tags = this.tags;
+      if (!tags) {
+        tags = [];
+      }
       if (inputValue && tags.indexOf(inputValue) === -1) {
         tags = [...tags, inputValue];
       }
@@ -487,7 +491,8 @@ export default {
         this.editRoomForm.setFieldsValue({"roomId": scope.roomId});
         this.editRoomForm.setFieldsValue({"roomImage": scope.roomPic});
       }, 100);
-      this.tags = scope.roomDesc;
+      // 确保 tags 数组正确初始化
+      this.tags = scope.roomDesc ? scope.roomDesc : [];
     },
 
 
@@ -571,6 +576,7 @@ export default {
     }
   },
   created() {
+    this.tags = []
     this.getRoomList();
   }
 }
