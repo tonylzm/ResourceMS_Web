@@ -32,7 +32,7 @@ export default {
       return "RRMS 资源预约系统"
     },
     copyright () {
-      return " FengSir"
+      return " TonyLin 2024 ALL RIGHTS RESERVED"
     }
   },
   methods: {

@@ -360,10 +360,11 @@ export default {
           this.$message.success("更新会议室信息成功");
           this.submitLoading = false;
           this.editRoomVisible = false;
-          //更新列表
-          await this.getRoomList();
           //重置表单
           this.editRoomForm.resetFields();
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         } catch (e) {
           this.submitLoading = false;
           console.log(e);
@@ -432,9 +433,10 @@ export default {
             this.addRoomForm.resetFields();
             this.tags = []
             this.fileList = []
-            this.getRoomList();
           }, 500);
-
+          setTimeout(() => {
+            window.location.reload();
+          }, 600);
         } catch (e) {
           this.submitLoading = false;
           return this.$message.warning("服务器繁忙，请稍后再试");

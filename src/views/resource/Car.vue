@@ -366,9 +366,12 @@ export default {
           const {data: res} = await this.$http.put(`/car/${fieldsValue['editCarId']}`, values);
           if (res.status !== 200) throw Error
           this.$message.success("更新车辆信息成功");
-          await this.getCarList();
           this.submitLoading = false;
           this.editCarVisible = false;
+          //1s后刷新页面
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         } catch (e) {
           this.submitLoading = false;
           console.log(e);
@@ -495,17 +498,17 @@ export default {
         try {
           const {data: res} = await this.$http.post(`/addcar`, values)
           if (res.status !== 200) throw Error
-
+          this.$message.success("添加车辆成功");
           setTimeout(() => {
             this.addCarVisible = false
             this.submitLoading = false;
-            this.$message.success("添加车辆成功");
             this.addCarForm.resetFields();
             this.tags = []
             this.fileList = []
-            this.getCarList();
           }, 500);
-
+          setTimeout(() => {
+            window.location.reload();
+          }, 600);
         } catch (e) {
           this.submitLoading = false;
           return this.$message.warning("服务器繁忙，请稍后再试");
